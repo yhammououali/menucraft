@@ -1,0 +1,82 @@
+x-orbstack:
+  project: menucraft
+
+services:
+  db:
+    image: mysql:8.0
+    platform: linux/arm64
+    container_name: menucraft_db
+    volumes:
+      - "menucraft_db_data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - menucraft_network
+
+  adminer:
+    image: adminer
+    platform: linux/arm64
+    container_name: menucraft_adminer
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: mysql
+      ADMINER_DEFAULT_DB_HOST: menucraft_db
+      ADMINER_DEFAULT_DB_NAME: ${MYSQL_DATABASE}
+      ADMINER_DEFAULT_SERVER: menucraft_db
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      - db
+    networks:
+      - menucraft_network
+
+  php:
+    container_name: menucraft_php
+    platform: linux/arm64
+    build:
+      context: ./php
+      args:
+        TIMEZONE: ${TIMEZONE}
+    volumes:
+      - ../:/var/www/menucraft:cached
+    networks:
+      - menucraft_network
+    ports:
+      - "9003:9003"
+
+  nginx:
+    container_name: menucraft_nginx
+    platform: linux/arm64
+    build:
+      context: ./nginx
+    volumes:
+      - ../:/var/www/menucraft:cached
+    ports:
+      - "80:80"
+    networks:
+      - menucraft_network
+    env_file:
+      - .env.nginx
+    depends_on:
+      - php
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: menucraft_mailhog
+    ports:
+      - "2525:1025"
+      - "8090:8025"
+    networks:
+      - menucraft_network
+
+volumes:
+  menucraft_db_data:
+
+networks:
+  menucraft_network:

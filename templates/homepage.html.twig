@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h1 class="display-4">Bienvenue sur Menucraft!</h1>
+            <p class="lead">Découvrez des recettes délicieuses et faciles à préparer.</p>
+            <hr class="my-4">
+            <p>Explorez notre collection de recettes et trouvez l'inspiration pour votre prochain repas.</p>
+            <a class="btn btn-primary btn-lg" href="{{ path('menucraft_recipe_list') }}" role="button">Voir les recettes</a>
+        </div>
+    </div>
+{% endblock %}

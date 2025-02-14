@@ -4,16 +4,58 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Form\RecipeType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class RecipeController extends AbstractController
 {
     #[Route('/recipes', name: 'menucraft_recipe_list', methods: ['GET'])]
-    public function list(): JsonResponse
+    public function list(): Response
     {
-        $recipes = [
+        $recipes = $this->getRecipes();
+
+        // return $this->json($recipes);
+
+        return $this->render('recipe/list.html.twig', ['recipes' => $recipes]);
+    }
+
+    #[Route('/recipes/create', name: 'menucraft_recipe_create', methods: ['GET', 'POST'])]
+    public function create(Request $request): Response
+    {
+        $form = $this->createForm(RecipeType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            return $this->redirectToRoute('menucraft_recipe_list');
+        }
+
+        return $this->render('recipe/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/recipes/{id}', name: 'menucraft_recipe_read', methods: ['GET'])]
+    public function read(int $id): Response
+    {
+        $recipes = $this->getRecipes();
+        $recipe = array_filter($recipes, fn($recipe) => $recipe['id'] === $id);
+
+        if (empty($recipe)) {
+            return $this->json(['message' => 'Recipe not found'], 404);
+        }
+
+        // return $this->json(array_values($recipe)[0]);
+        return $this->render('recipe/show.html.twig', ['recipe' => array_values($recipe)[0]]);
+    }
+
+    private function getRecipes(): array
+    {
+        return [
             [
                 'id' => 1,
                 'name' => 'Pasta al Pesto',
@@ -90,7 +132,5 @@ class RecipeController extends AbstractController
                 ],
             ],
         ];
-
-        return $this->json($recipes);
     }
 }

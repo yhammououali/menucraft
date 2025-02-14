@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Recettes{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Liste des Recettes</h1>
+        <a href="{{ path('menucraft_recipe_create') }}" class="btn btn-success mb-3">
+            <i class="fas fa-plus"></i> Nouvelle Recette
+        </a>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Temps de préparation</th>
+                <th>Difficulté</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for recipe in recipes %}
+                <tr>
+                    <td>{{ recipe.id }}</td>
+                    <td>{{ recipe.name }}</td>
+                    <td>{{ recipe.preparationTime }} minutes</td>
+                    <td>{{ recipe.difficulty }}</td>
+                    <td>
+                        <a href="" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Éditer
+                        </a>
+                        <a href="" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette recette ?');">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

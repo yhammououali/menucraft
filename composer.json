@@ -23,7 +23,8 @@
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.62"
+        "symfony/maker-bundle": "^1.62",
+        "symfony/web-profiler-bundle": "7.2.*"
     },
     "config": {
         "allow-plugins": {

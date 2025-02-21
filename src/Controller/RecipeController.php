@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Recipe;
 use App\Form\RecipeType;
+use App\Repository\RecipeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,24 +15,36 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RecipeController extends AbstractController
 {
+    public function __construct(private RecipeRepository $recipeRepository)
+    {
+    }
+
     #[Route('/recipes', name: 'menucraft_recipe_list', methods: ['GET'])]
     public function list(): Response
     {
-        $recipes = $this->getRecipes();
+        //$recipes = $this->getRecipes();
 
         // return $this->json($recipes);
 
-        return $this->render('recipe/list.html.twig', ['recipes' => $recipes]);
+        return $this->render('recipe/list.html.twig', [
+            //'recipes' => $this->recipeRepository->findAll(),
+            'recipes' => $this->recipeRepository->findPublishedAndNotDeleted(),
+        ]);
     }
 
     #[Route('/recipes/create', name: 'menucraft_recipe_create', methods: ['GET', 'POST'])]
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(RecipeType::class);
+        $recipe = new Recipe();
+
+        $form = $this->createForm(RecipeType::class, $recipe);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            $recipe->setIsPublished(false);
+
+            $entityManager->persist($recipe);
+            $entityManager->flush();
 
             return $this->redirectToRoute('menucraft_recipe_list');
         }
@@ -40,17 +55,50 @@ class RecipeController extends AbstractController
     }
 
     #[Route('/recipes/{id}', name: 'menucraft_recipe_read', methods: ['GET'])]
-    public function read(int $id): Response
+    public function read(Recipe $recipe): Response
     {
-        $recipes = $this->getRecipes();
-        $recipe = array_filter($recipes, fn($recipe) => $recipe['id'] === $id);
+        //$recipes = $this->getRecipes();
+        //$recipe = array_filter($recipes, fn($recipe) => $recipe['id'] === $id);
 
         if (empty($recipe)) {
             return $this->json(['message' => 'Recipe not found'], 404);
         }
 
         // return $this->json(array_values($recipe)[0]);
-        return $this->render('recipe/show.html.twig', ['recipe' => array_values($recipe)[0]]);
+        return $this->render('recipe/show.html.twig', [
+            //'recipe' => array_values($recipe)[0]
+            'recipe' => $recipe
+        ]);
+    }
+
+    #[Route('/recipes/{id}/update', name: 'menucraft_recipe_update', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Recipe $recipe, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(RecipeType::class, $recipe, ['is_edit' => true]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('menucraft_recipe_list');
+        }
+
+        return $this->render('recipe/edit.html.twig', [
+            'form' => $form->createView(),
+            'recipe' => $recipe,
+        ]);
+    }
+
+    #[Route('/recipes/delete/{id}', name: 'menucraft_recipe_delete', methods: ['GET'])]
+    public function delete(Recipe $recipe, EntityManagerInterface $entityManager): Response
+    {
+        // Hard delete
+        //$recipe->setDeletedAt(new \DateTimeImmutable());
+
+        $recipe->setDeletedAt(new \DateTimeImmutable());
+        $entityManager->flush();
+
+        return $this->redirectToRoute('menucraft_recipe_list');
     }
 
     private function getRecipes(): array

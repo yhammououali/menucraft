@@ -8,6 +8,7 @@ use App\Entity\Recipe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,12 +30,15 @@ class RecipeType extends AbstractType
                 'label' => 'Difficulté',
                 'attr' => ['class' => 'form-control']
             ])
-            ->add('steps', TextType::class, [
+            ->add('steps', TextareaType::class, [
                 'label' => 'Étapes',
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'rows' => 10,
+                ],
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Créer la recette',
+                'label' => $options['is_edit'] ?? false ? 'Mettre à jour la recette' : 'Créer la recette',
                 'attr' => ['class' => 'btn btn-primary mt-3']
             ]);
     }
@@ -43,6 +47,7 @@ class RecipeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Recipe::class,
+            'is_edit' => false,
         ]);
     }
 }

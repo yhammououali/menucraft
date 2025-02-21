@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Recette{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Modifier la recette : {{ recipe.name }}</h1>
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.preparationTime) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.difficulty) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.steps) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.save, { 'label': 'Mettre à jour la recette' }) }}
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

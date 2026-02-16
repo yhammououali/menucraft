@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Copyright - Menucraft{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h1 class="h4 mb-0">Copyright</h1>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">
+                        © {{ "now"|date("Y") }} Menucraft. Tous droits réservés.
+                    </p>
+
+                    <h2 class="h5 mt-4">Droits d'auteur</h2>
+                    <p>
+                        L’ensemble du contenu de ce site (textes, images, logos, mises en page, code, etc.)
+                        est protégé par le droit d’auteur et demeure la propriété de Menucraft ou de ses partenaires.
+                        Toute reproduction, distribution ou utilisation sans autorisation écrite préalable est interdite.
+                    </p>
+
+                    <h2 class="h5 mt-4">Utilisation du contenu</h2>
+                    <p>
+                        Vous êtes autorisé à consulter ce site et à l’utiliser pour un usage personnel et non commercial.
+                        Toute autre utilisation, notamment la modification, la diffusion ou la réutilisation du contenu,
+                        doit faire l’objet d’une autorisation.
+                    </p>
+
+                    <h2 class="h5 mt-4">Marques et logos</h2>
+                    <p>
+                        Les noms, logos et autres signes distinctifs présents sur ce site sont des marques déposées
+                        ou non déposées appartenant à Menucraft ou à des tiers. Ils ne peuvent être utilisés sans accord préalable.
+                    </p>
+
+                    <h2 class="h5 mt-4">Contact</h2>
+                    <p class="mb-0">
+                        Pour toute question relative aux droits d’auteur ou à l’utilisation du contenu de ce site,
+                        veuillez nous contacter via la page de contact ou l’adresse e-mail indiquée sur le site.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
